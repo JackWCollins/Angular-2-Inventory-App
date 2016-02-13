@@ -19,12 +19,12 @@ class Product {
 
 @Component({
   selector: 'inventory-app',
-  directive: [ProductsList],
+  directives: [ProductsList],
   template: `
     <div class="inventory-app">
       <products-list [productList]="products" (onProductSelected)="selectProduct($event)"></products-list>
     </div>
-  `
+  `,
 })
 
 class InventoryApp {
@@ -74,7 +74,7 @@ class InventoryApp {
                      [class.selected]="isSelected(product)">
         </product-row>
     </div>
-  `
+  `,
 })
 
 class ProductsList {
@@ -82,7 +82,7 @@ class ProductsList {
     onProductSelected: EventEmitter<Product>;
     currentProduct: Product;
     constructor() {
-        this.onProductSelected = new EventEmiter();
+        this.onProductSelected = new EventEmitter();
     }
 
     clicked(product: Product): void {
@@ -102,7 +102,7 @@ class ProductsList {
     selector: 'product-row',
     inputs: ['product'],
     host: {'class': 'item'},
-    directive: [ProductImage, ProductDepartment, PriceDisplay],
+    directives: [ProductImage, ProductDepartment, PriceDisplay],
     template: `
         <product-image [product]="product"></product-image>
         <div class="content">
@@ -115,10 +115,52 @@ class ProductsList {
             </div>
         </div>
         <price-display [price]="product.price"></price-display>
-    `
+    `,
 })
 
 class ProductRow {
+    product: Product;
+}
+
+@Component({
+    selector: 'product-image',
+    host: {class: 'ui small image'},
+    inputs: ['product'],
+    template: `
+        <img class="product-image" [src]="product.imageUrl">
+    `,
+})
+
+class ProductImage {
+    product: Product;
+}
+
+@Component({
+    selector: 'price-display',
+    inputs: ['price'],
+    template: `
+        <div class="price-display">\${{ price }}</div>
+    `,
+})
+
+class PriceDisplay {
+    price: number;
+}
+
+@Component({
+    selector: 'product-department',
+    inputs: ['product'],
+    template: `
+        <div class="product-department">
+            <span *ngFor="#name of product.department; #i=index">
+                <a href="#">{{ name }}</a>
+                <span>{{ i < (product.department.length-1) ? '>' : '' }}</span>
+            </span>
+        </div>
+    `,
+})
+
+class ProductDepartment {
     product: Product;
 }
 
